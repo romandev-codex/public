@@ -21,4 +21,5 @@ https://github.com/kijai/ComfyUI-WanVideoWrapper
 https://github.com/Fannovel16/comfyui_controlnet_aux
 https://github.com/kijai/ComfyUI-SCAIL-Pose
 https://github.com/kijai/ComfyUI-WanAnimatePreprocess
+https://github.com/kijai/ComfyUI-MelBandRoFormer
 https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader
