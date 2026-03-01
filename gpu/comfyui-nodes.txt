@@ -15,6 +15,7 @@ https://github.com/romandev-codex/ComfyUI-Frame-Interpolation
 https://github.com/GACLove/ComfyUI-VFI
 https://github.com/princepainter/ComfyUI-PainterLongVideo
 https://github.com/princepainter/ComfyUI-PainterI2VforKJ
+https://github.com/princepainter/ComfyUI-PainterI2V
 https://github.com/city96/ComfyUI-GGUF
 https://github.com/kijai/ComfyUI-MMAudio
 https://github.com/kijai/ComfyUI-WanVideoWrapper
