@@ -4,6 +4,7 @@ https://github.com/romandev-codex/ComfyUI-Downloader
 https://github.com/romandev-codex/ComfyUI-LoadByUrl
 https://github.com/romandev-codex/ComfyUI-Backup
 https://github.com/romandev-codex/ComfyUI-DevTools
+https://github.com/romandev-codex/ComfyUI-Transformers
 https://github.com/MoonGoblinDev/Civicomfy
 https://github.com/rgthree/rgthree-comfy
 https://github.com/crystian/ComfyUI-Crystools
