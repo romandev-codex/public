@@ -12,7 +12,6 @@ https://github.com/liusida/ComfyUI-Login
 https://github.com/kijai/ComfyUI-KJNodes
 https://github.com/badjeff/comfyui_lora_tag_loader
 https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
-https://github.com/romandev-codex/ComfyUI-Frame-Interpolation
 https://github.com/GACLove/ComfyUI-VFI
 https://github.com/princepainter/ComfyUI-PainterLongVideo
 https://github.com/princepainter/ComfyUI-PainterI2VforKJ
@@ -20,7 +19,6 @@ https://github.com/princepainter/ComfyUI-PainterI2V
 https://github.com/city96/ComfyUI-GGUF
 https://github.com/kijai/ComfyUI-MMAudio
 https://github.com/kijai/ComfyUI-WanVideoWrapper
-https://github.com/Fannovel16/comfyui_controlnet_aux
 https://github.com/kijai/ComfyUI-SCAIL-Pose
 https://github.com/kijai/ComfyUI-WanAnimatePreprocess
 https://github.com/kijai/ComfyUI-MelBandRoFormer
