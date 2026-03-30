@@ -8,11 +8,9 @@ https://github.com/romandev-codex/ComfyUI-Transformers
 https://github.com/MoonGoblinDev/Civicomfy
 https://github.com/rgthree/rgthree-comfy
 https://github.com/crystian/ComfyUI-Crystools
-https://github.com/liusida/ComfyUI-Login
 https://github.com/kijai/ComfyUI-KJNodes
 https://github.com/badjeff/comfyui_lora_tag_loader
 https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
-https://github.com/GACLove/ComfyUI-VFI
 https://github.com/princepainter/ComfyUI-PainterLongVideo
 https://github.com/princepainter/ComfyUI-PainterI2VforKJ
 https://github.com/princepainter/ComfyUI-PainterI2V
@@ -23,3 +21,4 @@ https://github.com/kijai/ComfyUI-SCAIL-Pose
 https://github.com/kijai/ComfyUI-WanAnimatePreprocess
 https://github.com/kijai/ComfyUI-MelBandRoFormer
 https://github.com/jnxmx/ComfyUI_HuggingFace_Downloader
+https://github.com/kijai/ComfyUI-GIMM-VFI
