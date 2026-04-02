@@ -4,8 +4,6 @@ set -e -o pipefail
 echo "V1.1.2"
 
 # Install deps
-pip install --upgrade pip
-pip install uv
 pip install --no-cache-dir aiohttp vastai-sdk fastapi uvicorn packaging --disable-pip-version-check
 
 # Start service
