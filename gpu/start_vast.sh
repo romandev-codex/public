@@ -11,10 +11,10 @@ pip install --no-cache-dir aiohttp vastai-sdk fastapi uvicorn packaging --disabl
 
 # Start service
 wget https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/service.py -O service.py
-nohup python service.py > service.log 2>&1 &
+nohup uvicorn service:app --host 0.0.0.0 --port 3010 --reload > uvicorn.log 2>&1 &
 
 # Run worker
 wget https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/worker.py -O worker.py
-python worker.py
+exec python3 worker.py
 
 echo "END"
