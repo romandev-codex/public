@@ -265,6 +265,11 @@ worker_config = WorkerConfig(
     model_healthcheck_url=MODEL_HEALTHCHECK_ENDPOINT,
     handlers=[
         HandlerConfig(
+            route="/health",
+            allow_parallel_requests=True,
+            max_queue_time=10.0,
+        ),
+        HandlerConfig(
             route="/prompt",
             allow_parallel_requests=False,
             max_queue_time=60.0,
