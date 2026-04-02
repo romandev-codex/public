@@ -31,7 +31,7 @@ MODEL_HEALTHCHECK_ENDPOINT = os.environ.get("MODEL_HEALTHCHECK_ENDPOINT", "/heal
 BENCHMARK_DATASET = [
     {
         "input": {
-            "prompt": {},
+            "prompt": {}
         }
     }
 ]
