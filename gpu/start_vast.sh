@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e -o pipefail
 
+# https://github.com/vast-ai/pyworker/blob/main/workers/comfyui-json/worker.py
 # wget -O - "https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/start_vast.sh" | bash
 
 echo "V1.1.2"
