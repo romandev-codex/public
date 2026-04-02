@@ -12,6 +12,23 @@ app = FastAPI()
 # In-memory storage (for demo only)
 history_store = {}
 
+
+async def run_prompt_task(prompt_id: str) -> None:
+    try:
+        # simulate long-running task
+        await asyncio.sleep(30)
+
+        # store result
+        history_store[prompt_id] = {
+            "status": "completed",
+            "result": f"command finished for {prompt_id}"
+        }
+    except Exception as exc:
+        history_store[prompt_id] = {
+            "status": "failed",
+            "result": str(exc)
+        }
+
 # 1. Status endpoint
 @app.get("/health")
 async def status():
@@ -25,18 +42,12 @@ async def prompt():
     # mark as pending
     history_store[prompt_id] = {"status": "pending", "result": None}
 
-    # simulate long-running task
-    await asyncio.sleep(30)
-
-    # store result
-    history_store[prompt_id] = {
-        "status": "completed",
-        "result": f"command finished for {prompt_id}"
-    }
+    # run work in background and return immediately
+    asyncio.create_task(run_prompt_task(prompt_id))
 
     return {
         "prompt_id": prompt_id,
-        "message": "command executed after 30 seconds"
+        "message": "command started in background"
     }
 
 # 3. History endpoint
