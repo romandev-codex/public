@@ -22,8 +22,8 @@ os.environ.setdefault("USE_SSL", "false")
 os.environ.setdefault(f"VAST_TCP_PORT_{os.environ['WORKER_PORT']}", os.environ["WORKER_PORT"])
 
 # ComyUI model configuration
-MODEL_SERVER_URL           = os.environ.get("MODEL_SERVER_URL", "http://127.0.0.1")
-MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "8000"))
+MODEL_SERVER_URL           = os.environ.get("MODEL_SERVER_URL", "http://0.0.0.0")
+MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "3010"))
 MODEL_LOG_FILE             = os.environ.get("MODEL_LOG_FILE", "/var/log/portal/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = os.environ.get("MODEL_HEALTHCHECK_ENDPOINT", "/health")
 
