@@ -3,18 +3,6 @@ set -e -o pipefail
 
 echo "V1.1.2"
 
-# Fix Jupyter-related issues
-mkdir -p /workspace
-cd /workspace
-
-unset JUPYTER_CONFIG_DIR
-unset JUPYTER_PATH
-unset JUPYTER_RUNTIME_DIR
-
-export HOME=/workspace
-export JUPYTER_RUNTIME_DIR=/workspace
-export JUPYTER_SERVER_ROOT=/workspace
-
 # Install deps
 pip install --upgrade pip
 pip install uv
