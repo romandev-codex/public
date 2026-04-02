@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e -o pipefail
 
+# wget -O - "https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/start_vast.sh" | bash
+
 echo "V1.1.2"
 
 # Install deps
