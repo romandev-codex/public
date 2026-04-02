@@ -23,8 +23,8 @@ os.environ.setdefault(f"VAST_TCP_PORT_{os.environ['WORKER_PORT']}", os.environ["
 
 # ComyUI model configuration
 MODEL_SERVER_URL           = os.environ.get("MODEL_SERVER_URL", "http://127.0.0.1")
-MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "7001"))
-MODEL_LOG_FILE             = os.environ.get("MODEL_LOG_FILE", "/var/log/portal/comfyui.log")
+MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "8000"))
+MODEL_LOG_FILE             = os.environ.get("MODEL_LOG_FILE", "/var/log/portal/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = os.environ.get("MODEL_HEALTHCHECK_ENDPOINT", "/health")
 
 _CURRENT_QUERY_PARAMS: ContextVar[dict | None] = ContextVar("current_query_params", default=None)
