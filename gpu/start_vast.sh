@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# wget -O - "https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/start_vast.sh" | bash
+
 set -e -o pipefail
 
 pip install --upgrade pip
