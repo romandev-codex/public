@@ -11,7 +11,7 @@ from contextvars import ContextVar
 os.environ.setdefault("UNSECURED", "false")
 
 # python worker.py
-WORKER_PORT = int(os.environ.get("WORKER_PORT", "8188"))
+WORKER_PORT = int(os.environ.get("WORKER_PORT", "3000"))
 
 # Running locally (outside Vast runtime) may miss required metrics env vars.
 os.environ.setdefault("WORKER_PORT", str(WORKER_PORT))
