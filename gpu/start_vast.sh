@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -o pipefail
 
+# https://github.com/vast-ai/vast-sdk/blob/main/start_server.sh
+# https://github.com/vast-ai/vast-sdk/blob/main/examples/server/comfy_worker.py
+
 # https://github.com/vast-ai/pyworker/blob/main/workers/comfyui-json/worker.py
 # wget -O - "https://raw.githubusercontent.com/romandev-codex/public/refs/heads/main/gpu/start_vast.sh" | bash
 
