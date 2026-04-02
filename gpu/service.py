@@ -1,7 +1,7 @@
 # pip install fastapi uvicorn
-# uvicorn service:app --reload
-# curl http://127.0.0.1:8000/health
-# curl -X POST http://127.0.0.1:8000/command
+# uvicorn service:app --host 0.0.0.0 --port 3010 --reload
+# curl http://127.0.0.1:3010/health
+# curl -X POST http://127.0.0.1:3010/command
 
 from fastapi import FastAPI, HTTPException
 import asyncio
@@ -49,3 +49,9 @@ async def get_history(promptid: str):
         "prompt_id": promptid,
         **history_store[promptid]
     }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("service:app", host="0.0.0.0", port=3010, reload=True)
