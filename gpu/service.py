@@ -1,6 +1,6 @@
 # pip install fastapi uvicorn
 # uvicorn service:app --reload
-# curl http://127.0.0.1:8000/status
+# curl http://127.0.0.1:8000/health
 # curl -X POST http://127.0.0.1:8000/command
 
 from fastapi import FastAPI, HTTPException
@@ -13,7 +13,7 @@ app = FastAPI()
 history_store = {}
 
 # 1. Status endpoint
-@app.get("/status")
+@app.get("/health")
 async def status():
     return {"status": "ok"}
 
