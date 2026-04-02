@@ -27,6 +27,15 @@ MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "8000"))
 MODEL_LOG_FILE             = os.environ.get("MODEL_LOG_FILE", "/var/log/portal/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = os.environ.get("MODEL_HEALTHCHECK_ENDPOINT", "/health")
 
+# Vast worker requires at least one handler to expose benchmark config.
+BENCHMARK_DATASET = [
+    {
+        "input": {
+            "prompt": {},
+        }
+    }
+]
+
 _CURRENT_QUERY_PARAMS: ContextVar[dict | None] = ContextVar("current_query_params", default=None)
 _BACKGROUND_PROMPT_WORKER_TASK: asyncio.Task | None = None
 _BACKGROUND_PROMPT_BUSY = False
@@ -259,6 +268,9 @@ worker_config = WorkerConfig(
             route="/prompt",
             allow_parallel_requests=False,
             max_queue_time=60.0,
+            benchmark_config=BenchmarkConfig(
+                dataset=BENCHMARK_DATASET,
+            ),
             response_generator=_prompt_response_generator,
             remote_function=_dispatch_prompt_in_background,
             workload_calculator=_constant_workload,
