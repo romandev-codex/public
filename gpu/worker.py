@@ -8,7 +8,7 @@ from vastai.serverless.server.lib import backend as vast_backend
 from contextvars import ContextVar
 
 # os.environ.setdefault("UNSECURED", "true")
-os.environ.setdefault("UNSECURED", "false")
+os.environ.setdefault("UNSECURED", "true")
 
 # python worker.py
 WORKER_PORT = int(os.environ.get("WORKER_PORT", "3000"))
@@ -27,6 +27,24 @@ MODEL_SERVER_PORT          = int(os.environ.get("MODEL_SERVER_PORT", "3010"))
 MODEL_LOG_FILE             = os.environ.get("MODEL_LOG_FILE", "/var/log/portal/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = os.environ.get("MODEL_HEALTHCHECK_ENDPOINT", "/health")
 
+# curl --location 'http://127.0.0.1:3000/prompt?token=test-token-123' \
+# --header 'Content-Type: application/json' \
+# --data '{
+#     "auth_data": {
+#       "cost": 1,
+#       "endpoint": "/prompt",
+#       "reqnum": 1,
+#       "request_idx": 0,
+#       "signature": "local-dev-signature",
+#       "url": "http://127.0.0.1:3000/prompt"
+#     },
+#     "payload": {
+#       "input": {
+#         "prompt": {}
+#       }
+#     }
+#   }'
+
 # Vast worker requires at least one handler to expose benchmark config.
 BENCHMARK_DATASET = [
     {
@@ -42,6 +60,12 @@ _BACKGROUND_PROMPT_BUSY = False
 _BACKGROUND_PROMPT_STATE_LOCK = asyncio.Lock()
 _COMFY_POLL_INTERVAL_SECONDS = 1.0
 _COMFY_PROMPT_TIMEOUT_SECONDS = 1800.0
+_WORKER_DEBUG = True
+
+
+def _debug_log(message: str) -> None:
+    if _WORKER_DEBUG:
+        print(f"[worker-debug] {message}")
 
 
 def _extract_prompt_id(response_body: bytes) -> str | None:
@@ -63,27 +87,47 @@ async def _wait_for_prompt_completion(
     query_params: dict,
 ) -> None:
     history_url = f"{MODEL_SERVER_URL}:{MODEL_SERVER_PORT}/history/{prompt_id}"
-    terminal_states = {"success", "error", "failed", "interrupted", "cancelled"}
+    terminal_states = {"success", "error", "failed", "interrupted", "cancelled", "completed"}
     deadline = asyncio.get_running_loop().time() + _COMFY_PROMPT_TIMEOUT_SECONDS
+    _debug_log(f"tracking prompt completion prompt_id={prompt_id} history_url={history_url}")
 
     while True:
         if asyncio.get_running_loop().time() >= deadline:
             print(f"Background prompt timed out after {_COMFY_PROMPT_TIMEOUT_SECONDS}s for prompt_id={prompt_id}")
+            _debug_log(f"timeout reached while tracking prompt_id={prompt_id}")
             return
 
         try:
             async with session.get(history_url, params=query_params or None) as response:
-                if response.status != 200:
-                    await asyncio.sleep(_COMFY_POLL_INTERVAL_SECONDS)
-                    continue
-
                 history_payload = await response.json(content_type=None)
                 if not isinstance(history_payload, dict):
                     await asyncio.sleep(_COMFY_POLL_INTERVAL_SECONDS)
                     continue
 
+                # Local test service schema: {"prompt_id": ..., "status": "pending|completed|failed", ...}
+                local_status = history_payload.get("status")
+                if isinstance(local_status, str):
+                    local_status_normalized = local_status.lower()
+                    if local_status_normalized in {"completed", "success"}:
+                        _debug_log(
+                            f"prompt reached local terminal success status={local_status_normalized} "
+                            f"prompt_id={prompt_id}"
+                        )
+                        return
+                    if local_status_normalized in {"failed", "error", "cancelled", "interrupted"}:
+                        _debug_log(
+                            f"prompt reached local terminal failure status={local_status_normalized} "
+                            f"prompt_id={prompt_id}"
+                        )
+                        return
+
                 prompt_entry = history_payload.get(prompt_id)
                 if not isinstance(prompt_entry, dict):
+                    if response.status >= 400:
+                        _debug_log(
+                            f"history poll status={response.status} without terminal payload "
+                            f"prompt_id={prompt_id}; retrying"
+                        )
                     await asyncio.sleep(_COMFY_POLL_INTERVAL_SECONDS)
                     continue
 
@@ -93,14 +137,18 @@ async def _wait_for_prompt_completion(
                     continue
 
                 if status.get("completed") is True:
+                    _debug_log(f"prompt completed flag set for prompt_id={prompt_id}")
                     return
 
                 status_str = status.get("status_str")
                 if isinstance(status_str, str) and status_str.lower() in terminal_states:
+                    _debug_log(
+                        f"prompt reached terminal state status_str={status_str} prompt_id={prompt_id}"
+                    )
                     return
-        except Exception:
+        except Exception as ex:
             # Best effort polling; keep trying until ComfyUI reports a terminal state.
-            pass
+            _debug_log(f"history poll failed for prompt_id={prompt_id}: {ex}")
 
         await asyncio.sleep(_COMFY_POLL_INTERVAL_SECONDS)
 
@@ -127,9 +175,11 @@ async def _dispatch_prompt_in_background(**params):
     global _BACKGROUND_PROMPT_BUSY
     query_params = _CURRENT_QUERY_PARAMS.get() or {}
     model_prompt_url = f"{MODEL_SERVER_URL}:{MODEL_SERVER_PORT}/prompt"
+    _debug_log(f"received /prompt dispatch with query_keys={list(query_params.keys())}")
 
     async with _BACKGROUND_PROMPT_STATE_LOCK:
         if _BACKGROUND_PROMPT_BUSY:
+            _debug_log("rejecting /prompt dispatch because worker is busy")
             return {
                 "status": "busy",
                 "message": "Worker already has an active run",
@@ -151,6 +201,7 @@ async def _dispatch_prompt_in_background(**params):
     except Exception as ex:
         async with _BACKGROUND_PROMPT_STATE_LOCK:
             _BACKGROUND_PROMPT_BUSY = False
+        _debug_log(f"failed to dispatch prompt to ComfyUI: {ex}")
         return {
             "status": "error",
             "message": f"Failed to dispatch prompt to ComfyUI: {ex}",
@@ -161,6 +212,7 @@ async def _dispatch_prompt_in_background(**params):
     if not prompt_id:
         async with _BACKGROUND_PROMPT_STATE_LOCK:
             _BACKGROUND_PROMPT_BUSY = False
+        _debug_log("ComfyUI response missing prompt_id")
         return {
             "status": "error",
             "message": "ComfyUI response missing prompt_id",
@@ -168,6 +220,8 @@ async def _dispatch_prompt_in_background(**params):
             "comfyui_response": response_body.decode("utf-8", errors="replace"),
             "status_code": 502,
         }
+
+    _debug_log(f"prompt accepted by ComfyUI prompt_id={prompt_id} status={response_status}")
 
     _BACKGROUND_PROMPT_WORKER_TASK = asyncio.create_task(
         _track_prompt_completion_in_background(prompt_id, query_params)
