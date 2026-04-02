@@ -68,8 +68,8 @@ worker_config = WorkerConfig(
     ],
     log_action_config=LogActionConfig(
         on_load=["Mock worker loaded"],
-        on_error=[],
-        on_info=[],
+        on_error=["Mock worker error"],
+        on_info=["Mock worker info"],
     ),
 )
 
